@@ -123,76 +123,92 @@
       </article>
     </section>
 
-    <section class="card" id="battery-credit">
-      <h2 class="section-title">Battery Program Credit (APS or SRP)</h2>
-      <p class="section-kicker">Estimate credits using average kW contributed during events (not max inverter kW). Use this as a planning estimate, not a guaranteed payout.</p>
+<section class="card" id="battery-credit">
+  <h2 class="section-title">Battery Program Credit (APS or SRP)</h2>
+  <p class="section-kicker">
+    This is an estimate based on event performance (kW delivered during events), not monthly kWh usage.
+    If your bill shows peak demand (kW), enter it to personalize the estimate.
+  </p>
 
-      <div class="form-grid" style="margin-top:14px;">
-        <div class="field">
-          <label for="program">Utility / Program</label>
-          <select id="program">
-            <option value="APS_TESLA_VPP">APS Tesla Virtual Power Plant (cap-style estimate)</option>
-            <option value="APS_KW_REWARD">APS Storage Rewards (kW-based estimate)</option>
-            <option value="SRP_BATTERY_PARTNER">SRP Battery Partner (kW per season)</option>
-          </select>
-        </div>
+  <div class="form-grid" style="margin-top:14px;">
+    <div class="field">
+      <label for="program">Utility / Program</label>
+      <select id="program">
+        <option value="APS_TESLA_VPP" selected>APS Tesla VPP (annual cap model)</option>
+        <option value="SRP_BATTERY_PARTNER">SRP Battery Partner (kW per season)</option>
+      </select>
+    </div>
 
-        <div class="field">
-          <label for="batteryModel">Battery model</label>
-          <select id="batteryModel"></select>
-        </div>
+    <div class="field">
+      <label for="batteryModel">Battery model</label>
+      <select id="batteryModel"></select>
+    </div>
 
-        <div class="field">
-          <label for="batteryQty">Battery quantity</label>
-          <input id="batteryQty" type="number" min="1" step="1" value="1" inputmode="numeric" />
-        </div>
+    <div class="field">
+      <label for="batteryQty">Battery quantity</label>
+      <input id="batteryQty" type="number" min="1" step="1" value="1" inputmode="numeric" />
+    </div>
 
-        <div class="field">
-          <label for="commitKw">Committed avg kW per battery</label>
-          <input id="commitKw" type="number" min="0" step="0.1" value="3.0" inputmode="decimal" />
-        </div>
+    <div class="field">
+      <label for="peakDemandKw">Peak demand from bill (kW) optional</label>
+      <input id="peakDemandKw" type="number" min="0" step="0.1" placeholder="e.g., 8.5" inputmode="decimal" />
+    </div>
 
-        <div class="field">
-          <label for="perf">Performance factor (0.00 to 1.00)</label>
-          <input id="perf" type="number" min="0" max="1" step="0.05" value="0.85" inputmode="decimal" />
-        </div>
+    <div class="field">
+      <label for="autoFromDemand">Auto-set event kW from demand</label>
+      <select id="autoFromDemand">
+        <option value="1" selected>On (recommended)</option>
+        <option value="0">Off (manual)</option>
+      </select>
+    </div>
 
-        <div class="field">
-          <label for="usableKwh">Estimated usable energy (kWh)</label>
-          <input id="usableKwh" type="text" readonly />
-        </div>
+    <div class="field">
+      <label for="commitKw">Avg event kW per battery (editable)</label>
+      <input id="commitKw" type="number" min="0" step="0.1" value="3.0" inputmode="decimal" />
+    </div>
 
-        <div class="field">
-          <label for="powerKw">Max discharge power (kW)</label>
-          <input id="powerKw" type="text" readonly />
-        </div>
+    <div class="field">
+      <label for="perf">Performance factor (standard)</label>
+      <input id="perf" type="number" min="0" max="1" step="0.01" value="0.85" inputmode="decimal" />
+    </div>
 
-        <div class="field">
-          <label for="creditedKw">Credited kW (avg)</label>
-          <input id="creditedKw" type="text" readonly />
-        </div>
+    <div class="field">
+      <label for="usableKwh">Estimated usable energy (kWh)</label>
+      <input id="usableKwh" type="text" readonly />
+    </div>
 
-        <div class="actions span-3">
-          <button id="calcBatteryBtn" class="btn" type="button">Calculate credit</button>
-        </div>
-      </div>
+    <div class="field">
+      <label for="powerKw">Max discharge power (kW)</label>
+      <input id="powerKw" type="text" readonly />
+    </div>
 
-      <div class="totals" style="margin-top:16px;">
-        <div class="total card-lite">
-          <div class="total-label">Estimated monthly credit</div>
-          <div id="monthlyCredit" class="total-value">$0</div>
-        </div>
-        <div class="total card-lite">
-          <div class="total-label">Estimated annual credit</div>
-          <div id="annualCredit" class="total-value">$0</div>
-        </div>
-        <div class="total card-lite">
-          <div class="total-label">Notes</div>
-          <div id="creditNote" style="font-weight:800; color:var(--muted); margin-top:6px;">Select APS or SRP above.</div>
-        </div>
-      </div>
-    </section>
+    <div class="field">
+      <label for="creditedKw">Credited kW (avg)</label>
+      <input id="creditedKw" type="text" readonly />
+    </div>
 
+    <div class="actions span-3">
+      <button id="calcBatteryBtn" class="btn" type="button">Calculate credit</button>
+    </div>
+  </div>
+
+  <div class="totals" style="margin-top:16px;">
+    <div class="total card-lite">
+      <div class="total-label">Estimated monthly credit</div>
+      <div id="monthlyCredit" class="total-value">$0</div>
+    </div>
+    <div class="total card-lite">
+      <div class="total-label">Estimated annual credit</div>
+      <div id="annualCredit" class="total-value">$0</div>
+    </div>
+    <div class="total card-lite">
+      <div class="total-label">Notes</div>
+      <div id="creditNote" style="font-weight:800; color:var(--muted); margin-top:6px;"></div>
+    </div>
+  </div>
+</section>
+
+        
     <section class="reviews">
       <h2 class="section-title">What local homeowners are saying</h2>
       <p class="section-kicker">Independent public feedback from real customers.</p>
