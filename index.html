@@ -3,61 +3,60 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title> AIDAN LEAVITT BRZY Solutions </title>
-  <meta property="og:title" content="Aidan Leavitt | BRZY Solutions" />
-<meta property="og:description" content="Quick Solar Savings Calculator + proof, map, and partners." />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://thefreedompro.github.io/BRZY/" />
-<meta property="og:image" content="https://thefreedompro.github.io/BRZY/FullSizeRender.jpeg" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://thefreedompro.github.io/BRZY/FullSizeRender.jpeg" />
+  <title>AIDAN LEAVITT BRZY Solutions</title>
 
-<link rel="stylesheet" href="style.css?v=2" />
+  <meta property="og:title" content="Aidan Leavitt | BRZY Solutions" />
+  <meta property="og:description" content="Quick Solar Savings Calculator + proof, map, and partners." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://thefreedompro.github.io/BRZY/" />
+  <meta property="og:image" content="https://thefreedompro.github.io/BRZY/FullSizeRender.jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://thefreedompro.github.io/BRZY/FullSizeRender.jpeg" />
+
+  <link rel="stylesheet" href="style.css?v=3" />
 </head>
+
 <body>
 
-  <!-- ===== Hero ===== -->
+  <section class="links card" id="more-links">
+    <h2 class="section-title">ABOUT US</h2>
+    <p class="section-kicker">Independent coverage, rankings, and public profiles.</p>
+    <ul class="link-chips">
+      <li><a href="https://www.google.com/search?q=aidan%20leavitt%20new%20hampshire" target="_blank" rel="noopener">AIDAN LEAVITT — Google</a></li>
+      <li><a href="https://www.bbb.org/us/az/phoenix/profile/solar-installation/independent-solar-1126-1000110842" target="_blank" rel="noopener">BBB A+ RATING — Google</a></li>
+      <li><a href="https://share.google/07zyJ4XtzqU0VAWqQ" target="_blank" rel="noopener">INDEPENDENT INSTALL PARTNER</a></li>
+    </ul>
+  </section>
 
-    <!-- ===== ABOUT US (compact chips) ===== -->
-    <section class="links card" id="more-links">
-      <h2 class="section-title">ABOUT US</h2>
-      <p class="section-kicker">Independent coverage, rankings, and public profiles.</p>
-      <ul class="link-chips">
-        <li><a href="https://www.google.com/search?q=aidan%20leavitt%20new%20hampshire" target="_blank" rel="noopener">AIDAN LEAVITT — Google</a></li>
-        <li><a href="https://www.bbb.org/us/az/phoenix/profile/solar-installation/independent-solar-1126-1000110842" target="_blank" rel="noopener">BBB A+ RATING — Google</a></li>
-        <li><a href="https://share.google/07zyJ4XtzqU0VAWqQ" target="_blank" rel="noopener">INDEPENDENT INSTALL PARTNER </a></li>
-      </ul>
-    </section>
   <header class="hero">
-    <div class="container hero__inner">
-      <div class="hero__text">
-        <h1 class="title"> Calculate Your Savings</h1>
+    <div class="container">
+      <div class="hero__inner">
+        <h1 class="title">Calculate Your Savings</h1>
         <p class="subtitle">See how switching to solar can reduce your electricity costs over time.</p>
+
+        <div class="hero__logos">
+          <img src="IMG_4883.jpeg" alt="SRP" class="utility-logo" />
+          <img src="IMG_4884.jpeg" alt="APS" class="utility-logo" />
+        </div>
       </div>
-<div class="hero__logos">
-  <img src="IMG_4883.jpeg" alt="SRP" class="utility-logo" />
-  <img src="IMG_4884.jpeg" alt="APS" class="utility-logo" />
-</div>
     </div>
   </header>
 
   <main class="container">
 
-      <!-- ===== Top contact strip ===== -->
-  <div class="phone-header">
-    <div class="phone-text">
-      <p class="phone-number">
-        <a href="sms:16037679594?&body=SOLAR">CLICK HERE FOR QUESTIONS?</a>
+    <div class="phone-header">
+      <div class="phone-text">
+        <p class="phone-number">
+          <a href="sms:16037679594?&body=SOLAR">CLICK HERE FOR QUESTIONS?</a>
+        </p>
         <p style="font-size:16px; font-weight:700; color:#157a5b; margin:4px 0 0 0;">
-  ⬆️ Click Questions? above to see
-</p>
-      </p>
+          ⬆️ Click Questions? above to see
+        </p>
+      </div>
     </div>
-  </div>
 
-    <!-- ===== Calculator ===== -->
     <section class="card">
       <form id="calcForm" class="form-grid" onsubmit="return false;">
         <div class="field">
@@ -71,13 +70,12 @@
         </div>
 
         <div class="field">
-          <label for="yearsRange">Timeline (years): <strong id="yearsDisplay">25</strong></label>
+          <label for="yearsRange">Timeline (years): <span id="yearsDisplay">25</span></label>
           <div class="range-wrap">
             <input id="yearsRange" type="range" min="1" max="30" value="25" />
           </div>
         </div>
 
-        <!-- Hidden, fixed 9% annual utility increase -->
         <input id="utilityEsc" type="hidden" value="0.09" />
 
         <div class="field span-2">
@@ -86,7 +84,7 @@
             <option value="0.0359" selected>3.59% per year</option>
             <option value="0.0299">2.99% per year</option>
             <option value="0.0199">1.99% per year</option>
-            <option value="0">(fixed) per year</option>
+            <option value="0">0% (fixed)</option>
           </select>
         </div>
 
@@ -95,7 +93,6 @@
         </div>
       </form>
 
-      <!-- Totals -->
       <div class="totals">
         <div class="total card-lite">
           <div class="total-label">Total Utility Cost</div>
@@ -111,12 +108,12 @@
         </div>
       </div>
 
-      <!-- Yearly Snapshot -->
       <article class="snapshot card-lite">
         <header class="snap-header">
           <h2 class="snap-year">Year <span id="snapYear">25</span></h2>
           <span class="snap-tag">Snapshot</span>
         </header>
+
         <div class="snap-rows">
           <div class="row"><span class="label">Monthly utility</span><span id="selMonthlyUtility" class="value">$0.00</span></div>
           <div class="row"><span class="label">Monthly solar</span><span id="selMonthlySolar" class="value">$0.00</span></div>
@@ -125,213 +122,105 @@
         </div>
       </article>
     </section>
-<section class="card" id="battery-credit">
-  <h2 class="section-title">APS Battery Program Credit</h2>
-  <p class="section-kicker">Estimate monthly bill credit using average kW contributed during events (not max inverter kW).</p>
 
-  <div class="form-grid" style="margin-top:14px;">
-    <div class="field">
-      <label for="program">Utility / Program</label>
-      <select id="program">
-        <option value="APS_STORAGE_REWARDS">APS Storage Rewards (Tesla / FranklinWH)</option>
-      </select>
-    </div>
+    <section class="card" id="battery-credit">
+      <h2 class="section-title">Battery Program Credit (APS or SRP)</h2>
+      <p class="section-kicker">Estimate credits using average kW contributed during events (not max inverter kW). Use this as a planning estimate, not a guaranteed payout.</p>
 
-    <div class="field">
-      <label for="batteryModel">Battery model</label>
-      <select id="batteryModel"></select>
-    </div>
+      <div class="form-grid" style="margin-top:14px;">
+        <div class="field">
+          <label for="program">Utility / Program</label>
+          <select id="program">
+            <option value="APS_TESLA_VPP">APS Tesla Virtual Power Plant (cap-style estimate)</option>
+            <option value="APS_KW_REWARD">APS Storage Rewards (kW-based estimate)</option>
+            <option value="SRP_BATTERY_PARTNER">SRP Battery Partner (kW per season)</option>
+          </select>
+        </div>
 
-    <div class="field">
-      <label for="batteryQty">Battery quantity</label>
-      <input id="batteryQty" type="number" min="1" step="1" value="1" inputmode="numeric" />
-    </div>
+        <div class="field">
+          <label for="batteryModel">Battery model</label>
+          <select id="batteryModel"></select>
+        </div>
 
-    <div class="field">
-      <label for="commitKw">Committed avg kW per battery</label>
-      <input id="commitKw" type="number" min="0" step="0.1" value="2.0" inputmode="decimal" />
-    </div>
+        <div class="field">
+          <label for="batteryQty">Battery quantity</label>
+          <input id="batteryQty" type="number" min="1" step="1" value="1" inputmode="numeric" />
+        </div>
 
-    <div class="field">
-      <label for="perf">Performance factor (0.00 to 1.00)</label>
-      <input id="perf" type="number" min="0" max="1" step="0.05" value="0.85" inputmode="decimal" />
-    </div>
+        <div class="field">
+          <label for="commitKw">Committed avg kW per battery</label>
+          <input id="commitKw" type="number" min="0" step="0.1" value="3.0" inputmode="decimal" />
+        </div>
 
-    <div class="field">
-      <label for="usableKwh">Estimated usable energy (kWh)</label>
-      <input id="usableKwh" type="text" readonly />
-    </div>
+        <div class="field">
+          <label for="perf">Performance factor (0.00 to 1.00)</label>
+          <input id="perf" type="number" min="0" max="1" step="0.05" value="0.85" inputmode="decimal" />
+        </div>
 
-    <div class="field">
-      <label for="powerKw">Max discharge power (kW)</label>
-      <input id="powerKw" type="text" readonly />
-    </div>
+        <div class="field">
+          <label for="usableKwh">Estimated usable energy (kWh)</label>
+          <input id="usableKwh" type="text" readonly />
+        </div>
 
-    <div class="field">
-      <label for="creditedKw">Credited kW (avg)</label>
-      <input id="creditedKw" type="text" readonly />
-    </div>
+        <div class="field">
+          <label for="powerKw">Max discharge power (kW)</label>
+          <input id="powerKw" type="text" readonly />
+        </div>
 
-    <div class="actions span-3">
-      <button id="calcBatteryBtn" class="btn" type="button">Calculate monthly credit</button>
-    </div>
-  </div>
+        <div class="field">
+          <label for="creditedKw">Credited kW (avg)</label>
+          <input id="creditedKw" type="text" readonly />
+        </div>
 
-  <div class="totals" style="margin-top:16px;">
-    <div class="total card-lite">
-      <div class="total-label">Estimated monthly credit</div>
-      <div id="monthlyCredit" class="total-value">$0</div>
-    </div>
-    <div class="total card-lite">
-      <div class="total-label">Estimated annual credit</div>
-      <div id="annualCredit" class="total-value">$0</div>
-    </div>
-    <div class="total card-lite">
-      <div class="total-label">Notes</div>
-      <div id="creditNote" style="font-weight:800; color:var(--muted); margin-top:6px;">
-        Uses avg contributed kW during events (default 2.0 kW per battery) × performance factor.
+        <div class="actions span-3">
+          <button id="calcBatteryBtn" class="btn" type="button">Calculate credit</button>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
-    
-    <!-- ===== Reviews collage ===== -->
+
+      <div class="totals" style="margin-top:16px;">
+        <div class="total card-lite">
+          <div class="total-label">Estimated monthly credit</div>
+          <div id="monthlyCredit" class="total-value">$0</div>
+        </div>
+        <div class="total card-lite">
+          <div class="total-label">Estimated annual credit</div>
+          <div id="annualCredit" class="total-value">$0</div>
+        </div>
+        <div class="total card-lite">
+          <div class="total-label">Notes</div>
+          <div id="creditNote" style="font-weight:800; color:var(--muted); margin-top:6px;">Select APS or SRP above.</div>
+        </div>
+      </div>
+    </section>
+
     <section class="reviews">
       <h2 class="section-title">What local homeowners are saying</h2>
       <p class="section-kicker">Independent public feedback from real customers.</p>
       <div class="reviews-grid">
-
-        <figure class="rev"><img src="IMG_4873.jpeg"   alt="Freedom Forever" /></figure>
-        <figure class="rev"><img src="IMG_4875.jpeg"   alt="Freedom Forever" /></figure>
-        <figure class="rev"><img src="IMG_4877.jpeg"   alt="Freedom Forever" /></figure>
-        <figure class="rev"><img src="IMG_4878.jpeg"   alt="Freedom Forever" /></figure>
-        <figure class="rev"><img src="IMG_6303.jpeg"   alt="Freedom Forever" /></figure>
-        <figure class="rev"><img src="IMG_4879.jpeg"    alt="Brad review" /></figure>
-        <figure class="rev"><img src="IMG_4876.jpeg"   alt="Tammy review" /></figure>
+        <figure class="rev"><img src="IMG_4873.jpeg" alt="Freedom Forever" /></figure>
+        <figure class="rev"><img src="IMG_4875.jpeg" alt="Freedom Forever" /></figure>
+        <figure class="rev"><img src="IMG_4877.jpeg" alt="Freedom Forever" /></figure>
+        <figure class="rev"><img src="IMG_4878.jpeg" alt="Freedom Forever" /></figure>
+        <figure class="rev"><img src="IMG_6303.jpeg" alt="Freedom Forever" /></figure>
+        <figure class="rev"><img src="IMG_4879.jpeg" alt="Brad review" /></figure>
+        <figure class="rev"><img src="IMG_4876.jpeg" alt="Tammy review" /></figure>
       </div>
     </section>
 
-    <!-- end chart-card -->
+    <section class="slides">
+      <img src="pdf_page_2.png"  alt="Company overview" loading="lazy" />
+      <img src="IMG_1234.jpg"    alt="Sponsors" loading="lazy" />
+      <img src="pdf_page_4.png"  alt="Partners" loading="lazy" />
+      <img src="pdf_page_3.png"  alt="Installation map" loading="lazy" />
+      <img src="pdf_page_17.png" alt="FAQ" loading="lazy" />
+      <img src="IMG_1359.jpeg"   alt="Client install" loading="lazy" />
+      <img src="IMG_6212.jpeg"   alt="Electrical work" loading="lazy" />
+      <img src="pdf_page_18.png" alt="Solar in snow" loading="lazy" />
+      <img src="IMPORTANT_DETAILS.PNG" alt="Program details summary" loading="lazy" />
+    </section>
 
-<!-- ===== Slides ===== -->
-<section class="slides">
-  <img src="pdf_page_2.png"  alt="Company overview" loading="lazy" />
-  <img src="IMG_1234.jpg"    alt="Sponsors" loading="lazy" />
-  <img src="pdf_page_4.png"  alt="Partners" loading="lazy" />
-  <img src="pdf_page_3.png"  alt="Installation map" loading="lazy" />
-  <img src="pdf_page_17.png" alt="FAQ" loading="lazy" />
-  <img src="IMG_1359.jpeg"   alt="Client install" loading="lazy" />
-  <img src="IMG_6212.jpeg"   alt="Electrical work" loading="lazy" />
-  <img src="pdf_page_18.png" alt="Solar in snow" loading="lazy" />
-  <img src="IMPORTANT_DETAILS.PNG" alt="Program details summary" loading="lazy" />
-</section>
+  </main>
 
-</main>
-
-<!-- ===== Scripts ===== -->
-<script src="script.js" defer></script>
-
-<script>
-/* ---------- Chart loader that won't fail silently ---------- */
-(function() {
-  const labels = [2000, 2005, 2010, 2015, 2020, 2021, 2022, 2023, 2024];
-  const values = [8.3, 9.1, 11.7, 12.7, 13.1, 13.7, 15.1, 15.9, 16.2];
-
-  // Fill the fallback table & notes immediately
-  (function seedFallback(){
-    const tb = document.getElementById('rateTableBody');
-    if (tb) tb.innerHTML = labels.map((y,i)=>`<tr><td>${y}</td><td>${values[i].toFixed(1)}</td></tr>`).join('');
-    const notes = document.getElementById('rateNotes');
-    if (notes) notes.textContent = 'Source: US EIA national average residential electricity price. Most recent year shown.';
-  })();
-
-  function loadScript(src) {
-    return new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = src; s.async = true;
-      s.onload = resolve;
-      s.onerror = reject;
-      document.head.appendChild(s);
-    });
-  }
-
-  async function ensureChartJS() {
-    if (window.Chart) return;
-    try {
-      await loadScript('https://cdn.jsdelivr.net/npm/chart.js');
-    } catch(e) {
-      // one quick retry (temporary network hiccup)
-      await new Promise(r => setTimeout(r, 400));
-      await loadScript('https://cdn.jsdelivr.net/npm/chart.js');
-    }
-  }
-
-  function renderChart() {
-    const wrap = document.getElementById('rateChartWrap');
-    const canvas = document.getElementById('rateChart');
-    if (!canvas || !canvas.getContext) return;
-
-    const ctx = canvas.getContext('2d');
-    if (window._rateChart) window._rateChart.destroy();
-
-    window._rateChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [{
-          label: 'US Avg Residential (¢/kWh)',
-          data: values,
-          borderColor: '#2ecc71',
-          backgroundColor: 'rgba(46,204,113,.18)',
-          fill: true,
-          tension: 0.35,
-          pointRadius: 3.5,
-          pointHoverRadius: 6,
-          borderWidth: 3
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: { label: c => `${c.parsed.y.toFixed(1)} ¢/kWh` }
-          }
-        },
-        scales: {
-          x: { title: { display: true, text: 'Year' }, grid: { display: false } },
-          y: {
-            title: { display: true, text: '¢/kWh' },
-            suggestedMin: Math.max(0, Math.min(...values) - 2),
-            suggestedMax: Math.max(...values) + 2,
-            ticks: { callback: v => v + '¢' }
-          }
-        }
-      }
-    });
-
-    if (wrap) wrap.setAttribute('aria-busy', 'false');
-  }
-
-  // Only load Chart.js when the chart is near viewport (reduces jank)
-  const target = document.getElementById('rates');
-  if (!target) return;
-
-  const start = async () => { await ensureChartJS(); renderChart(); };
-
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      if (entries.some(e => e.isIntersecting)) { io.disconnect(); start(); }
-    }, { rootMargin: '200px' });
-    io.observe(target);
-  } else {
-    // older browsers: just run after load
-    window.addEventListener('load', start, { once: true });
-  }
-})();
-</script>
-
+  <script src="script.js?v=3" defer></script>
 </body>
 </html>
-
