@@ -195,7 +195,7 @@
         }
       }
 
-      const commitPerBattery = clamp(num(commitEl.value, 3.0), 0, 1e6);
+      const commitPerBattery = clamp(num(commitEl.value, 4.5), 0, 1e6);
 
       const creditedRaw = commitPerBattery * qty * perf;
       const credited = Math.min(creditedRaw, maxPower * perf);
