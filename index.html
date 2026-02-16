@@ -126,91 +126,109 @@
       </article>
     </section>
 <section class="card" id="battery-credit">
-  <h2 class="section-title">Battery Credit + E-28 Arbitrage</h2>
-  <p class="section-kicker">Estimate bill credits from SRP/APS programs and the value of shifting energy into peak hours.</p>
 
-  <div class="form-grid" style="margin-top:14px;">
+  <h2 class="section-title">Battery Credit + Utility Arbitrage</h2>
+  <p class="section-kicker">
+    Estimate APS VPP or SRP Battery Partner payments and SRP E-28 peak shifting value.
+  </p>
+
+  <div class="form-grid">
+
     <div class="field">
-      <label for="program">Utility / Program</label>
+      <label>Utility Program</label>
       <select id="program">
         <option value="SRP_BATTERY_PARTNER">SRP Battery Partner</option>
-        <option value="APS_TESLA_VPP">APS Tesla VPP (Powerwall)</option>
+        <option value="APS_TESLA_VPP">APS Tesla VPP</option>
       </select>
     </div>
 
     <div class="field">
-      <label for="batteryModel">Battery model</label>
+      <label>Battery Model</label>
       <select id="batteryModel"></select>
     </div>
 
     <div class="field">
-      <label for="batteryQty">Battery quantity</label>
-      <input id="batteryQty" type="number" min="0" step="1" value="1" inputmode="numeric" />
+      <label>Quantity</label>
+      <input id="batteryQty" type="number" value="1" min="1">
     </div>
 
     <div class="field">
-      <label for="perf">Performance factor (0.00 to 1.00)</label>
-      <input id="perf" type="number" min="0" max="1" step="0.05" value="0.85" inputmode="decimal" />
+      <label>Performance Factor (0–1)</label>
+      <input id="perf" type="number" value="0.9" step="0.05" min="0" max="1">
     </div>
 
     <div class="field">
-      <label for="usableKwh">Estimated usable energy (kWh)</label>
-      <input id="usableKwh" type="text" readonly />
+      <label>Usable Energy (kWh)</label>
+      <input id="usableKwh" readonly>
     </div>
 
     <div class="field">
-      <label for="powerKw">Estimated discharge power (kW)</label>
-      <input id="powerKw" type="text" readonly />
+      <label>Discharge Capacity (kW)</label>
+      <input id="powerKw" readonly>
     </div>
 
     <div class="actions span-3">
-      <button id="calcBatteryBtn" class="btn" type="button">Calculate monthly credit</button>
+      <button id="calcBatteryBtn" class="btn" type="button">
+        Calculate Program Credit
+      </button>
     </div>
+
   </div>
 
-  <div class="totals" style="margin-top:16px;">
+  <div class="totals">
+
     <div class="total card-lite">
-      <div class="total-label">Estimated program credit</div>
+      <div class="total-label">Monthly Program Credit</div>
       <div id="monthlyCredit" class="total-value">$0</div>
     </div>
+
     <div class="total card-lite">
-      <div class="total-label">Estimated arbitrage value</div>
+      <div class="total-label">Monthly Arbitrage Value</div>
       <div id="arbitrageMonthly" class="total-value">$0</div>
     </div>
+
     <div class="total card-lite">
-      <div class="total-label">Notes</div>
-      <div id="creditNote" style="font-weight:800; color:var(--muted); margin-top:6px;">Uses published $/kW-year terms and a performance factor. Actual varies.</div>
+      <div class="total-label">Details</div>
+      <div id="creditNote" style="font-weight:700; color:#5b7269;"></div>
     </div>
+
   </div>
 
-  <div class="card-lite" style="margin-top:14px;">
+  <div class="card-lite" style="margin-top:20px;">
+
     <div class="form-grid">
+
       <div class="field">
-        <label for="season">Season (SRP E-28)</label>
+        <label>SRP E-28 Season</label>
         <select id="season">
-          <option value="SUMMER">Summer (May/Jun/Sep/Oct)</option>
-          <option value="SUMMER_PEAK">Summer peak (Jul/Aug)</option>
-          <option value="WINTER">Winter (Nov–Apr)</option>
+          <option value="SUMMER">Summer</option>
+          <option value="SUMMER_PEAK">Peak Summer (July–Aug)</option>
+          <option value="WINTER">Winter</option>
         </select>
       </div>
 
       <div class="field">
-        <label for="shiftKwhDay">kWh/day shifted into 6–9 p.m.</label>
-        <input id="shiftKwhDay" type="number" min="0" step="0.5" value="10" inputmode="decimal" />
+        <label>kWh Shifted Per Day</label>
+        <input id="shiftKwhDay" type="number" value="10" step="0.5">
       </div>
 
       <div class="field">
-        <label for="rte">Round-trip efficiency</label>
-        <input id="rte" type="number" min="0" max="1" step="0.01" value="0.90" inputmode="decimal" />
+        <label>Round Trip Efficiency</label>
+        <input id="rte" type="number" value="0.9" step="0.01" min="0" max="1">
       </div>
 
       <div class="actions span-3">
-        <button id="calcArbBtn" class="btn" type="button">Calculate arbitrage</button>
+        <button id="calcArbBtn" class="btn" type="button">
+          Calculate Arbitrage
+        </button>
       </div>
+
     </div>
 
-    <div id="arbDetail" class="section-kicker" style="margin:10px 0 0 0;"></div>
+    <p id="arbDetail" class="section-kicker" style="margin-top:10px;"></p>
+
   </div>
+
 </section>
     
     <!-- ===== Reviews collage ===== -->
