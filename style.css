@@ -80,21 +80,23 @@ section{margin:0 0 var(--space-6)}
 
 /* hero */
 .hero{
-  position:relative;
-  min-height:420px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  color:#ffffff;
-  overflow:hidden;
-  padding:64px 0 56px; /* add padding since you removed it earlier */
+  position: relative;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
+  color: #ffffff;
+  overflow: hidden;
 
-  background-color:#0a0a0a; /* fallback */
-  background-image:url("./IMG_4888.jpeg");
-  background-size:cover;
-  background-position:center 18%;
-  background-repeat:no-repeat;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+    url("./IMG_4888.jpeg");
+
+  background-size: contain;
+  background-position: right center;
+  background-repeat: no-repeat;
+  background-color: #000;
 }
 
 .hero::before{
