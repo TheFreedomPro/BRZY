@@ -1,195 +1,61 @@
-// Solar Savings Calculator — clean, robust
-document.addEventListener('DOMContentLoaded', () => {
-  // Inputs
-  const billInput         = document.getElementById('bill');
-  const solarInput        = document.getElementById('solarPayment');
-  const yearsRange        = document.getElementById('yearsRange');
-  const yearsDisplay      = document.getElementById('yearsDisplay');
-  const utilityEscInput   = document.getElementById('utilityEsc');  // fixed 9%
-  const solarEscSelect    = document.getElementById('solarEsc');
-
-  // Totals
-  const utilTotalEl  = document.getElementById('utilTotal');
-  const solarTotalEl = document.getElementById('solarTotal');
-  const savingsEl    = document.getElementById('savings');
-
-  // Snapshot
-  const snapYearEl           = document.getElementById('snapYear');
-  const selMonthlyUtilityEl  = document.getElementById('selMonthlyUtility');
-  const selMonthlySolarEl    = document.getElementById('selMonthlySolar');
-  const selMonthlySavingsEl  = document.getElementById('selMonthlySavings');
-  const selAnnualSavingsEl   = document.getElementById('selAnnualSavings');
-
-  const runBtn = document.getElementById('runBtn');
-
-  // Helpers
-  const fmtMoney = n =>
-    (Number.isFinite(n) ? n : 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-
-  // Sum a monthly series with annual escalator r across Y years.
-  // Treat inputs as dollars/month; escalator applies annually (compounded monthly).
-  function sumSeries(month0, r, years) {
-    const m0 = Math.max(0, Number(month0) || 0);
-    const Y  = Math.max(1, Math.min(30, Number(years) || 1));
-    const rm = Number(r) ? (1 + Number(r)) ** (1/12) - 1 : 0;  // convert annual to monthly
-    let total = 0, m = m0;
-    for (let i = 0; i < Y * 12; i++) {
-      total += m;
-      m *= (1 + rm);
-    }
-    return total;
-  }
-
-  function monthAtYear(month0, r, year) {
-    const m0 = Math.max(0, Number(month0) || 0);
-    const rm = Number(r) ? (1 + Number(r)) ** (1/12) - 1 : 0;
-    const months = Math.max(0, (Number(year) || 1) * 12 - 1);
-    return m0 * (1 + rm) ** months;
-  }
-
-  function recalc() {
-    const bill   = parseFloat(billInput.value) || 0;
-    const solar  = parseFloat(solarInput.value) || 0;
-    const years  = Math.max(1, Math.min(30, parseInt(yearsRange.value || '25', 10)));
-
-    const utilEsc = parseFloat(utilityEscInput.value || '0.09') || 0.09; // fixed 9%
-    const solEsc = Number(solarEscSelect.value);
-
-    // Totals
-    const utilTotal  = sumSeries(bill,  utilEsc, years);
-    const solarTotal = sumSeries(solar, solEsc,  years);
-    const savings    = utilTotal - solarTotal;
-
-    utilTotalEl.textContent  = fmtMoney(utilTotal);
-    solarTotalEl.textContent = fmtMoney(solarTotal);
-    savingsEl.textContent    = fmtMoney(savings);
-
-    // Yearly snapshot (selected end year)
-    yearsDisplay.textContent = years;
-    snapYearEl.textContent   = years;
-
-    const uM = monthAtYear(bill,  utilEsc, years);
-    const sM = monthAtYear(solar, solEsc,  years);
-    const mS = Math.max(0, uM - sM);
-    const aS = mS * 12;
-
-    selMonthlyUtilityEl.textContent = fmtMoney(uM);
-    selMonthlySolarEl.textContent   = fmtMoney(sM);
-    selMonthlySavingsEl.textContent = fmtMoney(mS);
-    selAnnualSavingsEl.textContent  = fmtMoney(aS);
-  }
-
-  // Live interactions
-  [billInput, solarInput].forEach(el => el.addEventListener('input', recalc));
-  yearsRange.addEventListener('input', recalc);
-  solarEscSelect.addEventListener('change', recalc);
-  runBtn.addEventListener('click', recalc);
-// --- TaxHive FAQ accordion ---
-document.querySelectorAll('.faq-toggle').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const id = btn.getAttribute('aria-controls');
-    const panel = document.getElementById(id);
-    const isOpen = btn.getAttribute('aria-expanded') === 'true';
-
-    // Close any other open item (keep this if you want one-at-a-time behavior)
-    document.querySelectorAll('.faq-toggle[aria-expanded="true"]').forEach(openBtn => {
-      if (openBtn !== btn) {
-        openBtn.setAttribute('aria-expanded', 'false');
-        const openPanel = document.getElementById(openBtn.getAttribute('aria-controls'));
-        openPanel && openPanel.setAttribute('hidden', '');
-      }
-    });
-
-    // Toggle this one
-    btn.setAttribute('aria-expanded', String(!isOpen));
-    if (panel) {
-      isOpen ? panel.setAttribute('hidden', '')
-             : panel.removeAttribute('hidden');
-    }
-  });
-});
-  // First paint
-/* ========= BRZY Calculator script.js (DROP-IN REPLACEMENT) ========= */
-
-/* ---------- helpers ---------- */
-const $ = (id) => document.getElementById(id);
-
-function clamp(n, min, max) {
-  return Math.max(min, Math.min(max, n));
-}
-
-function toNum(v, fallback = 0) {
-  const n = Number(v);
-  return Number.isFinite(n) ? n : fallback;
-}
-
-function money(n) {
-  const x = Number.isFinite(n) ? n : 0;
-  return x.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-}
-
-function money2(n) {
-  const x = Number.isFinite(n) ? n : 0;
-  return x.toLocaleString(undefined, { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
 /* =========================================================
-   1) MAIN SOLAR SAVINGS CALCULATOR
-   IDs expected in index.html:
+   BRZY - script.js (FULL REPLACEMENT)
+   Drop this in as your ONLY script.js
+
+   Works with your current index IDs:
    bill, solarPayment, yearsRange, yearsDisplay, utilityEsc, solarEsc, runBtn
    utilTotal, solarTotal, savings
    snapYear, selMonthlyUtility, selMonthlySolar, selMonthlySavings, selAnnualSavings
+
+   Battery section IDs (from your index):
+   program, batteryModel, batteryQty, perf, usableKwh, powerKw
+   calcBatteryBtn, monthlyCredit, arbitrageMonthly, creditNote
+   season, shiftKwhDay, rte, calcArbBtn, arbDetail
+
+   FAQ accordion IDs/classes:
+   .faq-toggle with aria-controls pointing to panel IDs
 ========================================================= */
 
-function calcTotals({ monthlyBill, monthlySolar, years, utilEsc, solarEsc }) {
-  let utilTotal = 0;
-  let solarTotal = 0;
+document.addEventListener("DOMContentLoaded", () => {
+  /* ---------- helpers ---------- */
+  const $ = (id) => document.getElementById(id);
 
-  for (let y = 1; y <= years; y++) {
-    const utilYear = monthlyBill * 12 * Math.pow(1 + utilEsc, y - 1);
-    const solarYear = monthlySolar * 12 * Math.pow(1 + solarEsc, y - 1);
-    utilTotal += utilYear;
-    solarTotal += solarYear;
-  }
+  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
-  return { utilTotal, solarTotal, savings: utilTotal - solarTotal };
-}
+  const toNum = (v, fallback = 0) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : fallback;
+  };
 
-function snapshotYear({ monthlyBill, monthlySolar, year, utilEsc, solarEsc }) {
-  const utilMonthly = monthlyBill * Math.pow(1 + utilEsc, year - 1);
-  const solarMonthly = monthlySolar * Math.pow(1 + solarEsc, year - 1);
-  const monthlySavings = utilMonthly - solarMonthly;
-  const annualSavings = monthlySavings * 12;
+  const fmtMoney0 = (n) =>
+    (Number.isFinite(n) ? n : 0).toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    });
 
-  return { utilMonthly, solarMonthly, monthlySavings, annualSavings };
-}
+  const fmtMoney2 = (n) =>
+    (Number.isFinite(n) ? n : 0).toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
 
-function runMainCalc() {
-  const billEl = $("bill");
-  const solarEl = $("solarPayment");
-  const yearsEl = $("yearsRange");
-  const utilEscEl = $("utilityEsc");
-  const solarEscEl = $("solarEsc");
-
-  if (!billEl || !solarEl || !yearsEl || !utilEscEl || !solarEscEl) return;
-
-  const monthlyBill = clamp(toNum(billEl.value, 0), 0, 1e9);
-  const monthlySolar = clamp(toNum(solarEl.value, 0), 0, 1e9);
-  const years = clamp(parseInt(yearsEl.value || "25", 10), 1, 30);
-
-  const utilEsc = clamp(toNum(utilEscEl.value, 0.09), 0, 0.5);
-  const solarEsc = clamp(toNum(solarEscEl.value, 0), 0, 0.5);
-
-  const totals = calcTotals({ monthlyBill, monthlySolar, years, utilEsc, solarEsc });
-  const snap = snapshotYear({ monthlyBill, monthlySolar, year: years, utilEsc, solarEsc });
+  /* =========================================================
+     1) MAIN SOLAR SAVINGS CALCULATOR (monthly compounding)
+  ========================================================= */
+  const billInput = $("bill");
+  const solarInput = $("solarPayment");
+  const yearsRange = $("yearsRange");
+  const yearsDisplay = $("yearsDisplay");
+  const utilityEscInput = $("utilityEsc"); // hidden fixed 0.09
+  const solarEscSelect = $("solarEsc");
+  const runBtn = $("runBtn");
 
   const utilTotalEl = $("utilTotal");
   const solarTotalEl = $("solarTotal");
   const savingsEl = $("savings");
-
-  if (utilTotalEl) utilTotalEl.textContent = money(totals.utilTotal);
-  if (solarTotalEl) solarTotalEl.textContent = money(totals.solarTotal);
-  if (savingsEl) savingsEl.textContent = money(totals.savings);
 
   const snapYearEl = $("snapYear");
   const selMonthlyUtilityEl = $("selMonthlyUtility");
@@ -197,223 +63,317 @@ function runMainCalc() {
   const selMonthlySavingsEl = $("selMonthlySavings");
   const selAnnualSavingsEl = $("selAnnualSavings");
 
-  if (snapYearEl) snapYearEl.textContent = String(years);
-  if (selMonthlyUtilityEl) selMonthlyUtilityEl.textContent = money2(snap.utilMonthly);
-  if (selMonthlySolarEl) selMonthlySolarEl.textContent = money2(snap.solarMonthly);
-  if (selMonthlySavingsEl) selMonthlySavingsEl.textContent = money2(snap.monthlySavings);
-  if (selAnnualSavingsEl) selAnnualSavingsEl.textContent = money2(snap.annualSavings);
-}
+  function annualToMonthlyRate(rAnnual) {
+    const r = toNum(rAnnual, 0);
+    if (!Number.isFinite(r) || r === 0) return 0;
+    return Math.pow(1 + r, 1 / 12) - 1;
+  }
 
-function wireMainCalc() {
-  const yearsEl = $("yearsRange");
-  const yearsDisplayEl = $("yearsDisplay");
-  const runBtn = $("runBtn");
+  // sum monthly series over Y years using monthly compounded rate
+  function sumSeries(month0, rAnnual, years) {
+    const m0 = clamp(toNum(month0, 0), 0, 1e12);
+    const Y = clamp(parseInt(years, 10) || 1, 1, 30);
+    const rm = annualToMonthlyRate(rAnnual);
 
-  if (yearsEl && yearsDisplayEl) {
-    yearsDisplayEl.textContent = yearsEl.value || "25";
-    yearsEl.addEventListener("input", () => {
-      yearsDisplayEl.textContent = yearsEl.value;
+    let total = 0;
+    let m = m0;
+    for (let i = 0; i < Y * 12; i++) {
+      total += m;
+      m *= 1 + rm;
+    }
+    return total;
+  }
+
+  // monthly value at end of selected year (month Y*12)
+  function monthAtEndOfYear(month0, rAnnual, year) {
+    const m0 = clamp(toNum(month0, 0), 0, 1e12);
+    const y = clamp(parseInt(year, 10) || 1, 1, 30);
+    const rm = annualToMonthlyRate(rAnnual);
+    const months = y * 12 - 1;
+    return m0 * Math.pow(1 + rm, months);
+  }
+
+  function recalcMain() {
+    if (!billInput || !solarInput || !yearsRange || !solarEscSelect) return;
+
+    const bill = clamp(toNum(billInput.value, 0), 0, 1e9);
+    const solar = clamp(toNum(solarInput.value, 0), 0, 1e9);
+    const years = clamp(parseInt(yearsRange.value || "25", 10), 1, 30);
+
+    const utilEsc = toNum(utilityEscInput?.value, 0.09);
+    const solarEsc = toNum(solarEscSelect.value, 0);
+
+    const utilTotal = sumSeries(bill, utilEsc, years);
+    const solarTotal = sumSeries(solar, solarEsc, years);
+    const savings = utilTotal - solarTotal;
+
+    if (utilTotalEl) utilTotalEl.textContent = fmtMoney0(utilTotal);
+    if (solarTotalEl) solarTotalEl.textContent = fmtMoney0(solarTotal);
+    if (savingsEl) savingsEl.textContent = fmtMoney0(savings);
+
+    if (yearsDisplay) yearsDisplay.textContent = String(years);
+    if (snapYearEl) snapYearEl.textContent = String(years);
+
+    const uM = monthAtEndOfYear(bill, utilEsc, years);
+    const sM = monthAtEndOfYear(solar, solarEsc, years);
+    const mS = uM - sM; // allow negative if solar > utility
+    const aS = mS * 12;
+
+    if (selMonthlyUtilityEl) selMonthlyUtilityEl.textContent = fmtMoney2(uM);
+    if (selMonthlySolarEl) selMonthlySolarEl.textContent = fmtMoney2(sM);
+    if (selMonthlySavingsEl) selMonthlySavingsEl.textContent = fmtMoney2(mS);
+    if (selAnnualSavingsEl) selAnnualSavingsEl.textContent = fmtMoney2(aS);
+  }
+
+  function wireMain() {
+    if (billInput) billInput.addEventListener("input", recalcMain);
+    if (solarInput) solarInput.addEventListener("input", recalcMain);
+
+    if (yearsRange) {
+      yearsRange.addEventListener("input", () => {
+        if (yearsDisplay) yearsDisplay.textContent = yearsRange.value;
+        recalcMain();
+      });
+    }
+
+    if (solarEscSelect) solarEscSelect.addEventListener("change", recalcMain);
+    if (runBtn) runBtn.addEventListener("click", recalcMain);
+
+    recalcMain();
+  }
+
+  /* =========================================================
+     2) FAQ ACCORDION
+  ========================================================= */
+  function wireFAQ() {
+    document.querySelectorAll(".faq-toggle").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("aria-controls");
+        const panel = id ? document.getElementById(id) : null;
+        const isOpen = btn.getAttribute("aria-expanded") === "true";
+
+        // close others (one-at-a-time behavior)
+        document
+          .querySelectorAll('.faq-toggle[aria-expanded="true"]')
+          .forEach((openBtn) => {
+            if (openBtn !== btn) {
+              openBtn.setAttribute("aria-expanded", "false");
+              const openPanelId = openBtn.getAttribute("aria-controls");
+              const openPanel = openPanelId
+                ? document.getElementById(openPanelId)
+                : null;
+              if (openPanel) openPanel.setAttribute("hidden", "");
+            }
+          });
+
+        btn.setAttribute("aria-expanded", String(!isOpen));
+        if (panel) {
+          if (isOpen) panel.setAttribute("hidden", "");
+          else panel.removeAttribute("hidden");
+        }
+      });
     });
-    yearsEl.addEventListener("change", runMainCalc);
   }
 
-  ["bill", "solarPayment", "solarEsc"].forEach((id) => {
-    const el = $(id);
-    if (el) el.addEventListener("change", runMainCalc);
-  });
+  /* =========================================================
+     3) BATTERY CREDIT + ARBITRAGE
+     NOTE:
+     - APS VPP/Storage payouts vary by program + season + performance.
+       This uses a conservative ESTIMATE based on "committed additional kW"
+       of ~2.0 kW per battery unless limited by discharge capacity.
+     - SRP Battery Partner uses $55 per kW per season; 2 seasons/year.
+       This returns an annualized monthly average.
+  ========================================================= */
 
-  if (runBtn) runBtn.addEventListener("click", runMainCalc);
+  // Only show Tesla PW3 and Franklin (as you requested)
+  const BATTERIES = [
+    {
+      id: "PW3",
+      label: "Tesla Powerwall 3",
+      usableKwh: 13.5,
+      powerKw: 11.5,
+      defaultAddlKw: 2.0,
+    },
+    {
+      id: "FRANKLIN",
+      label: "FranklinWH (aPower)",
+      usableKwh: 13.6,
+      powerKw: 5.0,
+      defaultAddlKw: 2.0,
+    },
+  ];
 
-  runMainCalc();
-}
+  const PROGRAMS = {
+    APS_TESLA_VPP: {
+      label: "APS Tesla VPP (Powerwall)",
+      // Placeholder estimate — you can change these after you confirm APS exact $/kW terms
+      ratePerKwSeason: 110, // dollars per kW per season (estimate)
+      seasonsPerYear: 1, // one season (May-Oct)
+      payoutNote:
+        "APS VPP estimate uses assumed $/kW seasonal value and a typical additional event capacity estimate. Actual depends on APS terms + events + performance.",
+    },
+    SRP_BATTERY_PARTNER: {
+      label: "SRP Battery Partner",
+      ratePerKwSeason: 55, // dollars per kW per season (per SRP docs)
+      seasonsPerYear: 2,
+      payoutNote:
+        "SRP Battery Partner uses $55 per kW per season (2 seasons/year). Displayed as an annualized monthly average. Actual depends on measured additional event capacity.",
+    },
+  };
 
-/* =========================================================
-   2) BATTERY CREDIT + ARBITRAGE
-   IDs expected in index.html:
-   program, batteryModel, batteryQty, perf, usableKwh, powerKw
-   calcBatteryBtn, monthlyCredit, arbitrageMonthly, creditNote
-   season, shiftKwhDay, rte, calcArbBtn, arbDetail
-========================================================= */
+  // Arbitrage delta assumptions ($/kWh value of shifting into peak)
+  // This is NOT a utility credit; it's a rough value estimate.
+  const ARB_DELTA = {
+    SUMMER: 0.18,
+    SUMMER_PEAK: 0.24,
+    WINTER: 0.12,
+  };
 
-/*
-SRP Battery Partner (Greater Grid / SRP):
-$55 per kW of additional capacity delivered EACH SEASON
-Two seasons per year => $110 per kW-year
-This script shows an annualized monthly average: (kW * 110) / 12
-
-APS Storage Rewards style language:
-Up to $110 per kW averaged across events during May 1–Oct 31 season
-This script uses $110 per kW-year and shows annualized monthly average: (kW * 110) / 12
-*/
-
-const BATTERIES = [
-  {
-    id: "PW3",
-    label: "Tesla Powerwall 3",
-    usableKwh: 13.5,
-    powerKw: 11.5,
-    defaultAddlKw: 2.0
-  },
-  {
-    id: "FRANKLIN",
-    label: "FranklinWH (aPower)",
-    usableKwh: 13.6,
-    powerKw: 5.0,
-    defaultAddlKw: 2.0
-  }
-];
-
-const PROGRAMS = {
-  SRP_BATTERY_PARTNER: {
-    label: "SRP Battery Partner",
-    ratePerKwSeason: 55,
-    seasonsPerYear: 2,
-    payoutNote: "SRP Battery Partner: $55 per kW per season (2 seasons/year). Paid as bill credits after each season."
-  },
-  APS_TESLA_VPP: {
-    label: "APS Storage Rewards / VPP",
-    ratePerKwSeason: 110,
-    seasonsPerYear: 1,
-    payoutNote: "APS-style programs: up to $110 per kW for the May–Oct season (annualized here). Actual depends on performance/events."
-  }
-};
-
-// Arbitrage $/kWh peak value (edit these if you want different assumptions)
-const ARB_DELTA = {
-  SUMMER: 0.18,
-  SUMMER_PEAK: 0.24,
-  WINTER: 0.12
-};
-
-function fillBatteryModels() {
-  const modelSel = $("batteryModel");
-  if (!modelSel) return;
-
-  modelSel.innerHTML = BATTERIES.map(b => `<option value="${b.id}">${b.label}</option>`).join("");
-  if (!modelSel.value) modelSel.value = BATTERIES[0].id;
-}
-
-function getSelectedBattery() {
-  const modelSel = $("batteryModel");
-  const id = modelSel ? modelSel.value : BATTERIES[0].id;
-  return BATTERIES.find(b => b.id === id) || BATTERIES[0];
-}
-
-function updateBatteryDerived() {
-  const qtyEl = $("batteryQty");
-  const perfEl = $("perf");
-  const usableEl = $("usableKwh");
-  const powerEl = $("powerKw");
-
-  if (!qtyEl || !perfEl || !usableEl || !powerEl) return;
-
-  const b = getSelectedBattery();
-  const qty = clamp(parseInt(qtyEl.value || "1", 10), 0, 99);
-  const perf = clamp(toNum(perfEl.value, 0.85), 0, 1);
-
-  const usable = b.usableKwh * qty * perf;
-  const power = b.powerKw * qty * perf;
-
-  usableEl.value = usable.toFixed(1);
-  powerEl.value = power.toFixed(1);
-}
-
-function estimateAdditionalKw() {
-  const qtyEl = $("batteryQty");
-  const perfEl = $("perf");
-  const powerEl = $("powerKw");
-
-  const b = getSelectedBattery();
-  const qty = clamp(parseInt(qtyEl?.value || "1", 10), 0, 99);
-  const perf = clamp(toNum(perfEl?.value, 0.85), 0, 1);
-  const dischargeCap = clamp(toNum(powerEl?.value, 0), 0, 1e6);
-
-  // reps are saying ~2 kW typical; use 2.0 kW per battery as default additional event capacity estimate
-  const raw = b.defaultAddlKw * qty * perf;
-
-  // additional capacity can’t exceed discharge capability
-  return clamp(raw, 0, dischargeCap);
-}
-
-function calcProgramCredit() {
   const programSel = $("program");
+  const batteryModelSel = $("batteryModel");
+  const batteryQtyEl = $("batteryQty");
+  const perfEl = $("perf");
+  const usableKwhEl = $("usableKwh");
+  const powerKwEl = $("powerKw");
+
+  const calcBatteryBtn = $("calcBatteryBtn");
   const monthlyCreditEl = $("monthlyCredit");
+  const arbitrageMonthlyEl = $("arbitrageMonthly");
   const creditNoteEl = $("creditNote");
 
-  if (!programSel || !monthlyCreditEl || !creditNoteEl) return;
-
-  const programKey = programSel.value || "SRP_BATTERY_PARTNER";
-  const p = PROGRAMS[programKey] || PROGRAMS.SRP_BATTERY_PARTNER;
-
-  updateBatteryDerived();
-
-  const addlKw = estimateAdditionalKw();
-
-  const annual = addlKw * p.ratePerKwSeason * p.seasonsPerYear;
-  const monthlyAvg = annual / 12;
-
-  monthlyCreditEl.textContent = money(monthlyAvg);
-
-  const model = getSelectedBattery();
-  creditNoteEl.textContent =
-    `${p.payoutNote} Estimated additional event capacity used: ${addlKw.toFixed(2)} kW. Battery: ${model.label}.`;
-}
-
-function calcArbitrage() {
   const seasonEl = $("season");
-  const shiftEl = $("shiftKwhDay");
+  const shiftKwhDayEl = $("shiftKwhDay");
   const rteEl = $("rte");
+  const calcArbBtn = $("calcArbBtn");
+  const arbDetailEl = $("arbDetail");
 
-  const outEl = $("arbitrageMonthly");
-  const detailEl = $("arbDetail");
+  function fillBatteryModels() {
+    if (!batteryModelSel) return;
+    batteryModelSel.innerHTML = BATTERIES.map(
+      (b) => `<option value="${b.id}">${b.label}</option>`
+    ).join("");
+    if (!batteryModelSel.value) batteryModelSel.value = BATTERIES[0].id;
+  }
 
-  if (!seasonEl || !shiftEl || !rteEl || !outEl || !detailEl) return;
+  function getBattery() {
+    const id = batteryModelSel?.value || BATTERIES[0].id;
+    return BATTERIES.find((b) => b.id === id) || BATTERIES[0];
+  }
 
-  const season = seasonEl.value || "SUMMER";
-  const kwhPerDay = clamp(toNum(shiftEl.value, 10), 0, 200);
-  const rte = clamp(toNum(rteEl.value, 0.9), 0, 1);
+  function updateBatteryDerived() {
+    if (!batteryQtyEl || !perfEl || !usableKwhEl || !powerKwEl) return;
 
-  const delta = ARB_DELTA[season] ?? ARB_DELTA.SUMMER;
+    const b = getBattery();
+    const qty = clamp(parseInt(batteryQtyEl.value || "1", 10), 0, 99);
+    const perf = clamp(toNum(perfEl.value, 0.85), 0, 1);
 
-  // simple estimate: value = shifted_kWh * peak_delta * efficiency
-  const monthly = kwhPerDay * 30 * delta * rte;
+    const usable = b.usableKwh * qty * perf;
+    const power = b.powerKw * qty * perf;
 
-  outEl.textContent = money(monthly);
-  detailEl.textContent =
-    `Estimate uses peak value ${money2(delta)} per kWh, ${kwhPerDay} kWh/day shifted, round-trip efficiency ${Math.round(rte * 100)}%. This is NOT a guaranteed bill credit.`;
-}
+    usableKwhEl.value = usable.toFixed(1);
+    powerKwEl.value = power.toFixed(1);
+  }
 
-function wireBatteryCalc() {
-  const programSel = $("program");
-  const modelSel = $("batteryModel");
-  const qtyEl = $("batteryQty");
-  const perfEl = $("perf");
+  // Conservative additional event capacity estimate:
+  // defaultAddlKw * qty * perf, capped by discharge capability
+  function estimateAdditionalKw() {
+    const b = getBattery();
+    const qty = clamp(parseInt(batteryQtyEl?.value || "1", 10), 0, 99);
+    const perf = clamp(toNum(perfEl?.value, 0.85), 0, 1);
+    const dischargeCap = clamp(toNum(powerKwEl?.value, 0), 0, 1e6);
 
-  const btnCredit = $("calcBatteryBtn");
-  const btnArb = $("calcArbBtn");
+    const raw = b.defaultAddlKw * qty * perf;
+    return clamp(raw, 0, dischargeCap);
+  }
 
-  fillBatteryModels();
-  updateBatteryDerived();
+  function calcProgramCredit() {
+    if (!programSel || !monthlyCreditEl || !creditNoteEl) return;
 
-  if (programSel) programSel.addEventListener("change", () => { updateBatteryDerived(); calcProgramCredit(); });
-  if (modelSel) modelSel.addEventListener("change", () => { updateBatteryDerived(); calcProgramCredit(); });
-  if (qtyEl) qtyEl.addEventListener("input", () => { updateBatteryDerived(); });
-  if (qtyEl) qtyEl.addEventListener("change", () => { updateBatteryDerived(); calcProgramCredit(); });
-  if (perfEl) perfEl.addEventListener("input", () => { updateBatteryDerived(); });
-  if (perfEl) perfEl.addEventListener("change", () => { updateBatteryDerived(); calcProgramCredit(); });
+    updateBatteryDerived();
 
-  if (btnCredit) btnCredit.addEventListener("click", calcProgramCredit);
-  if (btnArb) btnArb.addEventListener("click", calcArbitrage);
+    const key = programSel.value || "SRP_BATTERY_PARTNER";
+    const p = PROGRAMS[key] || PROGRAMS.SRP_BATTERY_PARTNER;
 
-  // seed outputs
-  calcProgramCredit();
-  calcArbitrage();
-}
+    const addlKw = estimateAdditionalKw();
 
-/* ---------- init ---------- */
-document.addEventListener("DOMContentLoaded", () => {
-  wireMainCalc();
-  wireBatteryCalc();
-});
-  recalc();
+    const annual = addlKw * p.ratePerKwSeason * p.seasonsPerYear;
+    const monthlyAvg = annual / 12;
+
+    monthlyCreditEl.textContent = fmtMoney0(monthlyAvg);
+
+    const b = getBattery();
+    creditNoteEl.textContent = `${p.payoutNote} Est. additional event capacity used: ${addlKw.toFixed(
+      2
+    )} kW. Battery: ${b.label}.`;
+  }
+
+  function calcArbitrage() {
+    if (!seasonEl || !shiftKwhDayEl || !rteEl || !arbitrageMonthlyEl || !arbDetailEl)
+      return;
+
+    const season = seasonEl.value || "SUMMER";
+    const kwhPerDay = clamp(toNum(shiftKwhDayEl.value, 10), 0, 300);
+    const rte = clamp(toNum(rteEl.value, 0.9), 0, 1);
+
+    const delta = ARB_DELTA[season] ?? ARB_DELTA.SUMMER;
+
+    const monthly = kwhPerDay * 30 * delta * rte;
+
+    arbitrageMonthlyEl.textContent = fmtMoney0(monthly);
+    arbDetailEl.textContent = `Estimate uses value ${fmtMoney2(
+      delta
+    )} per kWh, ${kwhPerDay} kWh/day shifted, RTE ${Math.round(
+      rte * 100
+    )}%. Not a guaranteed credit.`;
+  }
+
+  function wireBattery() {
+    // If battery section doesn't exist on page, skip quietly
+    if (!programSel || !batteryModelSel) return;
+
+    // Keep SRP + APS in the dropdown (you wanted SRP back)
+    // If your HTML options differ, this still works as long as values match:
+    // SRP_BATTERY_PARTNER and APS_TESLA_VPP
+    fillBatteryModels();
+    updateBatteryDerived();
+
+    if (programSel)
+      programSel.addEventListener("change", () => {
+        updateBatteryDerived();
+        calcProgramCredit();
+      });
+
+    if (batteryModelSel)
+      batteryModelSel.addEventListener("change", () => {
+        updateBatteryDerived();
+        calcProgramCredit();
+      });
+
+    if (batteryQtyEl) {
+      batteryQtyEl.addEventListener("input", updateBatteryDerived);
+      batteryQtyEl.addEventListener("change", () => {
+        updateBatteryDerived();
+        calcProgramCredit();
+      });
+    }
+
+    if (perfEl) {
+      perfEl.addEventListener("input", updateBatteryDerived);
+      perfEl.addEventListener("change", () => {
+        updateBatteryDerived();
+        calcProgramCredit();
+      });
+    }
+
+    if (calcBatteryBtn) calcBatteryBtn.addEventListener("click", calcProgramCredit);
+    if (calcArbBtn) calcArbBtn.addEventListener("click", calcArbitrage);
+
+    calcProgramCredit();
+    calcArbitrage();
+  }
+
+  /* ---------- init ---------- */
+  wireMain();
+  wireFAQ();
+  wireBattery();
 });
