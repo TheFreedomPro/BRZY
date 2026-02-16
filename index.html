@@ -125,39 +125,94 @@
         </div>
       </article>
     </section>
+<section class="card" id="battery-credit">
+  <h2 class="section-title">Battery Credit + E-28 Arbitrage</h2>
+  <p class="section-kicker">Estimate bill credits from SRP/APS programs and the value of shifting energy into peak hours.</p>
 
-    <!-- ===== Lowes exclusive way to own solar and still get tax credit (AURA OWNERSHIP PPA) ===== -->
+  <div class="form-grid" style="margin-top:14px;">
+    <div class="field">
+      <label for="program">Utility / Program</label>
+      <select id="program">
+        <option value="SRP_BATTERY_PARTNER">SRP Battery Partner</option>
+        <option value="APS_TESLA_VPP">APS Tesla VPP (Powerwall)</option>
+      </select>
+    </div>
 
-<!-- ===== Aura program (5-year PPA to ownership) ===== -->
-<section id="ppa" class="card programs">
-  <h2 class="section-title">WELCOME TO THE AURA CLUB</h2>
-<p class="section-subtitle">
-  The only 5-YEAR Purchase Power Agreement To Own
-</p>
+    <div class="field">
+      <label for="batteryModel">Battery model</label>
+      <select id="batteryModel"></select>
+    </div>
 
-    Aura starts as a 5-year power purchase agreement (PPA). You pay for the solar power your roof produces,
-    typically at a lower rate than your utility. After 5 years, the system transitions so you can own it.
-  </p>
+    <div class="field">
+      <label for="batteryQty">Battery quantity</label>
+      <input id="batteryQty" type="number" min="0" step="1" value="1" inputmode="numeric" />
+    </div>
 
-  <ul class="bullets">
-    <li>Lower upfront cost compared to traditional ownership</li>
-    <li>Short 5-year term designed to move you into ownership</li>
-    <li>Program structure applies available commercial-style incentives on the backend</li>
-    <li>Target benefit up to ~35% in incentives when you qualify</li>
-  </ul>
+    <div class="field">
+      <label for="perf">Performance factor (0.00 to 1.00)</label>
+      <input id="perf" type="number" min="0" max="1" step="0.05" value="0.85" inputmode="decimal" />
+    </div>
 
-  <p class="fine">
-    Incentives and eligibility vary by home, utility, and program requirements. This is not tax advice.
-  </p>
+    <div class="field">
+      <label for="usableKwh">Estimated usable energy (kWh)</label>
+      <input id="usableKwh" type="text" readonly />
+    </div>
 
-  <div class="cta-row">
-   <div class="phone-text">
-      <p class="phone-number">
-        <a href="sms:16037679594?&body=WOULD I QUALIFY FOR AURA">CLICK TO ASK MORE</a>
-        <p style="font-size:16px; font-weight:700; color:#157a5b; margin:4px 0 0 0;">
+    <div class="field">
+      <label for="powerKw">Estimated discharge power (kW)</label>
+      <input id="powerKw" type="text" readonly />
+    </div>
+
+    <div class="actions span-3">
+      <button id="calcBatteryBtn" class="btn" type="button">Calculate monthly credit</button>
+    </div>
+  </div>
+
+  <div class="totals" style="margin-top:16px;">
+    <div class="total card-lite">
+      <div class="total-label">Estimated program credit</div>
+      <div id="monthlyCredit" class="total-value">$0</div>
+    </div>
+    <div class="total card-lite">
+      <div class="total-label">Estimated arbitrage value</div>
+      <div id="arbitrageMonthly" class="total-value">$0</div>
+    </div>
+    <div class="total card-lite">
+      <div class="total-label">Notes</div>
+      <div id="creditNote" style="font-weight:800; color:var(--muted); margin-top:6px;">Uses published $/kW-year terms and a performance factor. Actual varies.</div>
+    </div>
+  </div>
+
+  <div class="card-lite" style="margin-top:14px;">
+    <div class="form-grid">
+      <div class="field">
+        <label for="season">Season (SRP E-28)</label>
+        <select id="season">
+          <option value="SUMMER">Summer (May/Jun/Sep/Oct)</option>
+          <option value="SUMMER_PEAK">Summer peak (Jul/Aug)</option>
+          <option value="WINTER">Winter (Nov–Apr)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="shiftKwhDay">kWh/day shifted into 6–9 p.m.</label>
+        <input id="shiftKwhDay" type="number" min="0" step="0.5" value="10" inputmode="decimal" />
+      </div>
+
+      <div class="field">
+        <label for="rte">Round-trip efficiency</label>
+        <input id="rte" type="number" min="0" max="1" step="0.01" value="0.90" inputmode="decimal" />
+      </div>
+
+      <div class="actions span-3">
+        <button id="calcArbBtn" class="btn" type="button">Calculate arbitrage</button>
+      </div>
+    </div>
+
+    <div id="arbDetail" class="section-kicker" style="margin:10px 0 0 0;"></div>
   </div>
 </section>
-
+    
     <!-- ===== Reviews collage ===== -->
     <section class="reviews">
       <h2 class="section-title">What local homeowners are saying</h2>
