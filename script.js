@@ -109,114 +109,311 @@ document.querySelectorAll('.faq-toggle').forEach(btn => {
   });
 });
   // First paint
-// ===============================
-/* =========================
-   APS BATTERY PROGRAM CREDIT
-   Tesla Powerwall 3 + FranklinWH only
-   ========================= */
+/* ========= BRZY Calculator script.js (DROP-IN REPLACEMENT) ========= */
 
-(function () {
-  const el = (id) => document.getElementById(id);
+/* ---------- helpers ---------- */
+const $ = (id) => document.getElementById(id);
 
-  const programEl = el("program");
-  const modelEl = el("batteryModel");
-  const qtyEl = el("batteryQty");
-  const commitKwEl = el("commitKw");
-  const perfEl = el("perf");
+function clamp(n, min, max) {
+  return Math.max(min, Math.min(max, n));
+}
 
-  const usableKwhEl = el("usableKwh");
-  const powerKwEl = el("powerKw");
-  const creditedKwEl = el("creditedKw");
+function toNum(v, fallback = 0) {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
+}
 
-  const btnEl = el("calcBatteryBtn");
-  const monthlyCreditEl = el("monthlyCredit");
-  const annualCreditEl = el("annualCredit");
-  const noteEl = el("creditNote");
+function money(n) {
+  const x = Number.isFinite(n) ? n : 0;
+  return x.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+}
 
-  if (!programEl || !modelEl || !btnEl) return;
+function money2(n) {
+  const x = Number.isFinite(n) ? n : 0;
+  return x.toLocaleString(undefined, { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
-  const BATTERIES = [
-    { key: "TESLA_PW3", name: "Tesla Powerwall 3", usableKwh: 13.5, maxKw: 11.5 },
-    { key: "FRANKLIN_AWH", name: "FranklinWH aPower", usableKwh: 13.6, maxKw: 5.0 },
-  ];
+/* =========================================================
+   1) MAIN SOLAR SAVINGS CALCULATOR
+   IDs expected in index.html:
+   bill, solarPayment, yearsRange, yearsDisplay, utilityEsc, solarEsc, runBtn
+   utilTotal, solarTotal, savings
+   snapYear, selMonthlyUtility, selMonthlySolar, selMonthlySavings, selAnnualSavings
+========================================================= */
 
-  // public/filing-level references commonly cite ~$110 per kW-year for APS storage rewards style programs
-  // we apply it to "credited avg kW", not max inverter kW.
-  const APS_DOLLARS_PER_KW_YEAR = 110;
+function calcTotals({ monthlyBill, monthlySolar, years, utilEsc, solarEsc }) {
+  let utilTotal = 0;
+  let solarTotal = 0;
 
-  const fmtMoney0 = (n) =>
-    (isFinite(n) ? n : 0).toLocaleString(undefined, {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 0,
+  for (let y = 1; y <= years; y++) {
+    const utilYear = monthlyBill * 12 * Math.pow(1 + utilEsc, y - 1);
+    const solarYear = monthlySolar * 12 * Math.pow(1 + solarEsc, y - 1);
+    utilTotal += utilYear;
+    solarTotal += solarYear;
+  }
+
+  return { utilTotal, solarTotal, savings: utilTotal - solarTotal };
+}
+
+function snapshotYear({ monthlyBill, monthlySolar, year, utilEsc, solarEsc }) {
+  const utilMonthly = monthlyBill * Math.pow(1 + utilEsc, year - 1);
+  const solarMonthly = monthlySolar * Math.pow(1 + solarEsc, year - 1);
+  const monthlySavings = utilMonthly - solarMonthly;
+  const annualSavings = monthlySavings * 12;
+
+  return { utilMonthly, solarMonthly, monthlySavings, annualSavings };
+}
+
+function runMainCalc() {
+  const billEl = $("bill");
+  const solarEl = $("solarPayment");
+  const yearsEl = $("yearsRange");
+  const utilEscEl = $("utilityEsc");
+  const solarEscEl = $("solarEsc");
+
+  if (!billEl || !solarEl || !yearsEl || !utilEscEl || !solarEscEl) return;
+
+  const monthlyBill = clamp(toNum(billEl.value, 0), 0, 1e9);
+  const monthlySolar = clamp(toNum(solarEl.value, 0), 0, 1e9);
+  const years = clamp(parseInt(yearsEl.value || "25", 10), 1, 30);
+
+  const utilEsc = clamp(toNum(utilEscEl.value, 0.09), 0, 0.5);
+  const solarEsc = clamp(toNum(solarEscEl.value, 0), 0, 0.5);
+
+  const totals = calcTotals({ monthlyBill, monthlySolar, years, utilEsc, solarEsc });
+  const snap = snapshotYear({ monthlyBill, monthlySolar, year: years, utilEsc, solarEsc });
+
+  const utilTotalEl = $("utilTotal");
+  const solarTotalEl = $("solarTotal");
+  const savingsEl = $("savings");
+
+  if (utilTotalEl) utilTotalEl.textContent = money(totals.utilTotal);
+  if (solarTotalEl) solarTotalEl.textContent = money(totals.solarTotal);
+  if (savingsEl) savingsEl.textContent = money(totals.savings);
+
+  const snapYearEl = $("snapYear");
+  const selMonthlyUtilityEl = $("selMonthlyUtility");
+  const selMonthlySolarEl = $("selMonthlySolar");
+  const selMonthlySavingsEl = $("selMonthlySavings");
+  const selAnnualSavingsEl = $("selAnnualSavings");
+
+  if (snapYearEl) snapYearEl.textContent = String(years);
+  if (selMonthlyUtilityEl) selMonthlyUtilityEl.textContent = money2(snap.utilMonthly);
+  if (selMonthlySolarEl) selMonthlySolarEl.textContent = money2(snap.solarMonthly);
+  if (selMonthlySavingsEl) selMonthlySavingsEl.textContent = money2(snap.monthlySavings);
+  if (selAnnualSavingsEl) selAnnualSavingsEl.textContent = money2(snap.annualSavings);
+}
+
+function wireMainCalc() {
+  const yearsEl = $("yearsRange");
+  const yearsDisplayEl = $("yearsDisplay");
+  const runBtn = $("runBtn");
+
+  if (yearsEl && yearsDisplayEl) {
+    yearsDisplayEl.textContent = yearsEl.value || "25";
+    yearsEl.addEventListener("input", () => {
+      yearsDisplayEl.textContent = yearsEl.value;
     });
-
-  const fmtNum = (n, d = 1) => (isFinite(n) ? Number(n).toFixed(d) : "0.0");
-
-  function clamp(n, min, max) {
-    n = Number(n);
-    if (!isFinite(n)) return min;
-    return Math.min(max, Math.max(min, n));
+    yearsEl.addEventListener("change", runMainCalc);
   }
 
-  function currentBattery() {
-    const key = modelEl.value;
-    return BATTERIES.find((b) => b.key === key) || BATTERIES[0];
+  ["bill", "solarPayment", "solarEsc"].forEach((id) => {
+    const el = $(id);
+    if (el) el.addEventListener("change", runMainCalc);
+  });
+
+  if (runBtn) runBtn.addEventListener("click", runMainCalc);
+
+  runMainCalc();
+}
+
+/* =========================================================
+   2) BATTERY CREDIT + ARBITRAGE
+   IDs expected in index.html:
+   program, batteryModel, batteryQty, perf, usableKwh, powerKw
+   calcBatteryBtn, monthlyCredit, arbitrageMonthly, creditNote
+   season, shiftKwhDay, rte, calcArbBtn, arbDetail
+========================================================= */
+
+/*
+SRP Battery Partner (Greater Grid / SRP):
+$55 per kW of additional capacity delivered EACH SEASON
+Two seasons per year => $110 per kW-year
+This script shows an annualized monthly average: (kW * 110) / 12
+
+APS Storage Rewards style language:
+Up to $110 per kW averaged across events during May 1–Oct 31 season
+This script uses $110 per kW-year and shows annualized monthly average: (kW * 110) / 12
+*/
+
+const BATTERIES = [
+  {
+    id: "PW3",
+    label: "Tesla Powerwall 3",
+    usableKwh: 13.5,
+    powerKw: 11.5,
+    defaultAddlKw: 2.0
+  },
+  {
+    id: "FRANKLIN",
+    label: "FranklinWH (aPower)",
+    usableKwh: 13.6,
+    powerKw: 5.0,
+    defaultAddlKw: 2.0
   }
+];
 
-  function seedModels() {
-    modelEl.innerHTML = BATTERIES.map(
-      (b) => `<option value="${b.key}">${b.name}</option>`
-    ).join("");
+const PROGRAMS = {
+  SRP_BATTERY_PARTNER: {
+    label: "SRP Battery Partner",
+    ratePerKwSeason: 55,
+    seasonsPerYear: 2,
+    payoutNote: "SRP Battery Partner: $55 per kW per season (2 seasons/year). Paid as bill credits after each season."
+  },
+  APS_TESLA_VPP: {
+    label: "APS Storage Rewards / VPP",
+    ratePerKwSeason: 110,
+    seasonsPerYear: 1,
+    payoutNote: "APS-style programs: up to $110 per kW for the May–Oct season (annualized here). Actual depends on performance/events."
   }
+};
 
-  function updateReadonlyFields() {
-    const b = currentBattery();
-    const qty = clamp(qtyEl?.value ?? 1, 1, 99);
-    const perf = clamp(perfEl?.value ?? 0.85, 0, 1);
+// Arbitrage $/kWh peak value (edit these if you want different assumptions)
+const ARB_DELTA = {
+  SUMMER: 0.18,
+  SUMMER_PEAK: 0.24,
+  WINTER: 0.12
+};
 
-    // committed avg kW per battery should not exceed max kW
-    const commitPerBatt = clamp(commitKwEl?.value ?? 2.0, 0, b.maxKw);
+function fillBatteryModels() {
+  const modelSel = $("batteryModel");
+  if (!modelSel) return;
 
-    const totalUsable = b.usableKwh * qty * perf;
-    const creditedKw = commitPerBatt * qty * perf;
+  modelSel.innerHTML = BATTERIES.map(b => `<option value="${b.id}">${b.label}</option>`).join("");
+  if (!modelSel.value) modelSel.value = BATTERIES[0].id;
+}
 
-    if (usableKwhEl) usableKwhEl.value = fmtNum(totalUsable, 1);
-    if (powerKwEl) powerKwEl.value = fmtNum(b.maxKw * qty, 1);
-    if (creditedKwEl) creditedKwEl.value = fmtNum(creditedKw, 2);
-  }
+function getSelectedBattery() {
+  const modelSel = $("batteryModel");
+  const id = modelSel ? modelSel.value : BATTERIES[0].id;
+  return BATTERIES.find(b => b.id === id) || BATTERIES[0];
+}
 
-  function calcApsCredit() {
-    const b = currentBattery();
-    const qty = clamp(qtyEl?.value ?? 1, 1, 99);
-    const perf = clamp(perfEl?.value ?? 0.85, 0, 1);
+function updateBatteryDerived() {
+  const qtyEl = $("batteryQty");
+  const perfEl = $("perf");
+  const usableEl = $("usableKwh");
+  const powerEl = $("powerKw");
 
-    const commitPerBatt = clamp(commitKwEl?.value ?? 2.0, 0, b.maxKw);
-    const creditedKw = commitPerBatt * qty * perf;
+  if (!qtyEl || !perfEl || !usableEl || !powerEl) return;
 
-    const annual = creditedKw * APS_DOLLARS_PER_KW_YEAR;
-    const monthly = annual / 12;
+  const b = getSelectedBattery();
+  const qty = clamp(parseInt(qtyEl.value || "1", 10), 0, 99);
+  const perf = clamp(toNum(perfEl.value, 0.85), 0, 1);
 
-    if (monthlyCreditEl) monthlyCreditEl.textContent = fmtMoney0(monthly);
-    if (annualCreditEl) annualCreditEl.textContent = fmtMoney0(annual);
+  const usable = b.usableKwh * qty * perf;
+  const power = b.powerKw * qty * perf;
 
-    if (noteEl) {
-      noteEl.textContent =
-        `Credited kW = (committed avg kW per battery) × qty × performance. ` +
-        `Rate used: $${APS_DOLLARS_PER_KW_YEAR}/kW-year. ` +
-        `Tip: if your reps see ~2 kW typical, keep committed avg kW at 2.0.`;
-    }
-  }
+  usableEl.value = usable.toFixed(1);
+  powerEl.value = power.toFixed(1);
+}
 
-  seedModels();
-  updateReadonlyFields();
+function estimateAdditionalKw() {
+  const qtyEl = $("batteryQty");
+  const perfEl = $("perf");
+  const powerEl = $("powerKw");
 
-  modelEl.addEventListener("change", updateReadonlyFields);
-  if (qtyEl) qtyEl.addEventListener("input", updateReadonlyFields);
-  if (perfEl) perfEl.addEventListener("input", updateReadonlyFields);
-  if (commitKwEl) commitKwEl.addEventListener("input", updateReadonlyFields);
+  const b = getSelectedBattery();
+  const qty = clamp(parseInt(qtyEl?.value || "1", 10), 0, 99);
+  const perf = clamp(toNum(perfEl?.value, 0.85), 0, 1);
+  const dischargeCap = clamp(toNum(powerEl?.value, 0), 0, 1e6);
 
-  btnEl.addEventListener("click", calcApsCredit);
-})();
+  // reps are saying ~2 kW typical; use 2.0 kW per battery as default additional event capacity estimate
+  const raw = b.defaultAddlKw * qty * perf;
+
+  // additional capacity can’t exceed discharge capability
+  return clamp(raw, 0, dischargeCap);
+}
+
+function calcProgramCredit() {
+  const programSel = $("program");
+  const monthlyCreditEl = $("monthlyCredit");
+  const creditNoteEl = $("creditNote");
+
+  if (!programSel || !monthlyCreditEl || !creditNoteEl) return;
+
+  const programKey = programSel.value || "SRP_BATTERY_PARTNER";
+  const p = PROGRAMS[programKey] || PROGRAMS.SRP_BATTERY_PARTNER;
+
+  updateBatteryDerived();
+
+  const addlKw = estimateAdditionalKw();
+
+  const annual = addlKw * p.ratePerKwSeason * p.seasonsPerYear;
+  const monthlyAvg = annual / 12;
+
+  monthlyCreditEl.textContent = money(monthlyAvg);
+
+  const model = getSelectedBattery();
+  creditNoteEl.textContent =
+    `${p.payoutNote} Estimated additional event capacity used: ${addlKw.toFixed(2)} kW. Battery: ${model.label}.`;
+}
+
+function calcArbitrage() {
+  const seasonEl = $("season");
+  const shiftEl = $("shiftKwhDay");
+  const rteEl = $("rte");
+
+  const outEl = $("arbitrageMonthly");
+  const detailEl = $("arbDetail");
+
+  if (!seasonEl || !shiftEl || !rteEl || !outEl || !detailEl) return;
+
+  const season = seasonEl.value || "SUMMER";
+  const kwhPerDay = clamp(toNum(shiftEl.value, 10), 0, 200);
+  const rte = clamp(toNum(rteEl.value, 0.9), 0, 1);
+
+  const delta = ARB_DELTA[season] ?? ARB_DELTA.SUMMER;
+
+  // simple estimate: value = shifted_kWh * peak_delta * efficiency
+  const monthly = kwhPerDay * 30 * delta * rte;
+
+  outEl.textContent = money(monthly);
+  detailEl.textContent =
+    `Estimate uses peak value ${money2(delta)} per kWh, ${kwhPerDay} kWh/day shifted, round-trip efficiency ${Math.round(rte * 100)}%. This is NOT a guaranteed bill credit.`;
+}
+
+function wireBatteryCalc() {
+  const programSel = $("program");
+  const modelSel = $("batteryModel");
+  const qtyEl = $("batteryQty");
+  const perfEl = $("perf");
+
+  const btnCredit = $("calcBatteryBtn");
+  const btnArb = $("calcArbBtn");
+
+  fillBatteryModels();
+  updateBatteryDerived();
+
+  if (programSel) programSel.addEventListener("change", () => { updateBatteryDerived(); calcProgramCredit(); });
+  if (modelSel) modelSel.addEventListener("change", () => { updateBatteryDerived(); calcProgramCredit(); });
+  if (qtyEl) qtyEl.addEventListener("input", () => { updateBatteryDerived(); });
+  if (qtyEl) qtyEl.addEventListener("change", () => { updateBatteryDerived(); calcProgramCredit(); });
+  if (perfEl) perfEl.addEventListener("input", () => { updateBatteryDerived(); });
+  if (perfEl) perfEl.addEventListener("change", () => { updateBatteryDerived(); calcProgramCredit(); });
+
+  if (btnCredit) btnCredit.addEventListener("click", calcProgramCredit);
+  if (btnArb) btnArb.addEventListener("click", calcArbitrage);
+
+  // seed outputs
+  calcProgramCredit();
+  calcArbitrage();
+}
+
+/* ---------- init ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  wireMainCalc();
+  wireBatteryCalc();
+});
   recalc();
 });
