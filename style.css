@@ -719,3 +719,18 @@ input[type="number"]::placeholder{color:rgba(91,114,105,.7)}
   }
 
 }
+#more-links {
+  text-align: center !important;
+}
+
+#more-links .section-title {
+  text-align: center !important;
+}
+
+#more-links .section-kicker {
+  text-align: center !important;
+}
+
+#more-links .link-chips {
+  justify-content: center !important;
+}
