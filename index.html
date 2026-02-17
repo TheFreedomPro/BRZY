@@ -71,7 +71,7 @@
         </div>
 
         <div class="field">
-          <label for="solarPayment">Monthly solar payment ($)</label>
+          <label for="solarPayment">Monthly Battery + solar payment ($)</label>
           <input id="solarPayment" type="number" min="0" step="1" placeholder="e.g., 135" inputmode="decimal" />
         </div>
 
@@ -104,10 +104,6 @@
           <div class="total-label">Total Utility Cost</div>
           <div id="utilTotal" class="total-value">$0</div>
         </div>
-        <div class="total card-lite">
-          <div id="solarTotal" class="total-value">$0</div>
-        </div>
-        <div class="total card-lite">
           <div class="total-label">Total Utility Bill Savings</div>
           <div id="savings" class="total-value">$0</div>
         </div>
@@ -121,7 +117,6 @@
 
         <div class="snap-rows">
           <div class="row"><span class="label">Monthly utility</span><span id="selMonthlyUtility" class="value">$0.00</span></div>
-          <div class="row"><span class="label">Monthly solar</span><span id="selMonthlySolar" class="value">$0.00</span></div>
           <div class="row"><span class="label">Monthly savings</span><span id="selMonthlySavings" class="value">$0.00</span></div>
           <div class="row"><span class="label">Annual savings</span><span id="selAnnualSavings" class="value">$0.00</span></div>
         </div>
@@ -139,8 +134,8 @@
     <div class="field">
       <label for="program">Utility / Program</label>
       <select id="program">
-        <option value="APS_TESLA_VPP" selected>APS Tesla VPP (annual cap model)</option>
-        <option value="SRP_BATTERY_PARTNER">SRP Battery Partner (kW per season)</option>
+        <option value="SRP_TESLA_VPP" selected>SRP Tesla VPP (annual cap model)</option>
+        <option value="APS_BATTERY_PARTNER">APS Battery Partner (kW per season)</option>
       </select>
     </div>
 
