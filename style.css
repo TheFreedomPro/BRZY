@@ -734,3 +734,14 @@ input[type="number"]::placeholder{color:rgba(91,114,105,.7)}
 #more-links .link-chips {
   justify-content: center !important;
 }
+.totals.two-col{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:16px;
+}
+
+@media (max-width:860px){
+  .totals.two-col{
+    grid-template-columns:1fr;
+  }
+}
